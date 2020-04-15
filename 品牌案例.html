@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap-3.3.7.css">
+    <style>
+      
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 添加头部 -->
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加品牌</h3>
+            </div>
+            <div class="panel-body form-inline ">
+                <label>
+                    Id:
+                    <input type="text" class="form-control" v-model='id' v-color="'pink'">
+                </label>
+                <label>
+                    name:
+                    <input type="text" class="form-control" v-model='name' @keyup.enter='add' v-focus v-color="'pink'">
+                </label>
+                <input type="button" value="添加" class="btn btn-primary" @click='add'>
+                 <label>
+                    搜索关键字:
+                    <input type="text" class="form-control" v-model='keywords' @click=''>
+                </label>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover table-striped text-center">
+            <thead>
+                <tr>
+                    <th class="text-center">id</th>
+                    <th class="text-center">name</th>
+                    <th class="text-center">ctime</th>
+                    <th class="text-center">
+                        <a href="#">操作</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for='(item,index) in search(keywords)'>
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.ctime | dataFormat}}</td>
+                    <td>
+                        <a href="#" @click='del(index)'>delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</body>
+<script src="./vue-2.4.0.js"></script>
+<script>
+    Vue.filter('dataFormat', function (data) {
+        var dt = new Date();
+        var y = dt.getFullYear();
+        var m = (dt.getMonth() + 1).toString().padStart(2, '0');
+        var d = (dt.getDate()).toString().padStart(2, '0');;
+
+        var hh = (dt.getHours()).toString().padStart(2, '0');;
+        var mm = (dt.getMinutes()).toString().padStart(2, '0');;
+        var ss = (dt.getSeconds()).toString().padStart(2, '0');;
+        return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+
+    })
+
+    Vue.directive('focus', {
+        bind: function (el, binding) {    
+            el.focus();          
+        },
+        inserted: function (el, binding) {
+            el.focus();
+        },
+        update: function (el, binding) {
+
+        }
+    })
+    Vue.directive('color', {
+        bind: function (el, binding) {
+            el.style.color = binding.value;
+        },
+        inserted: function (el, binding) {
+        },
+        update: function (el, binding) {
+        }
+    })
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            id: '',
+            name: '',
+            keywords: '',
+            list: [
+                { id: 1, name: '苹果', ctime: new Date() },
+                { id: 2, name: '香蕉', ctime: new Date() },
+                { id: 3, name: '橘子', ctime: new Date() },
+            ]
+        },
+        methods: {
+            add() {
+                if (this.id == '' || this.name == '') {
+                    alert('错误')
+
+                } else {
+                    this.list.push({
+                        id: this.id, name: this.name, ctime: new Date()
+
+                    })
+                }
+                this.id = null;
+                this.name = null
+            },
+            del(index) {
+                this.list.some((item,i)=>{
+                    if(i === index){
+                        this.list.splice(index,1)
+                        return true
+                    }
+                })
+            },
+            search(keywords){
+                return this.list.filter(item =>{
+                    if (item.name.includes(keywords)) {
+                        return item
+                    }
+                })
+            }  
+            
+        },
+
+    })
+
+
+</script>
+
+</html>
